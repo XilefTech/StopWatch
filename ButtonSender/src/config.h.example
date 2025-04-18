@@ -4,7 +4,11 @@
 namespace config {
 	namespace wifi {
 		constexpr char networkName[] = "StopWatchNetwork";
-		constexpr char password[] = "1234"; 
+		constexpr char password[] = "1234";
+
+		IPAddress local_IP(192, 168, 0, 5);
+		IPAddress gateway(192, 168, 0, 1);
+		IPAddress subnet(255, 255, 255, 0);
 	};
 }
 
