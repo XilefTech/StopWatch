@@ -1,18 +1,34 @@
 #include <Arduino.h>
+#include <WiFi.h>
+#include "config.h"
 
-// put function declarations here:
-int myFunction(int, int);
+
+int initWifi();
+
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+	initWifi();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+	while (WiFi.status() == WL_CONNECTED) {
+		delay(1000); // Placeholder for actual work
+	}
+	WiFi.reconnect(); // Attempt to reconnect if disconnected
+	while (WiFi.status() != WL_CONNECTED) {
+		delay(100); // Wait for reconnection
+	}
 }
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+
+
+int initWifi() {
+	WiFi.mode(WIFI_STA);
+	WiFi.begin(config::wifi::networkName, config::wifi::password);
+
+	while (WiFi.status() != WL_CONNECTED) {
+		delay(100);
+	}
+
+	WiFi.config(config::wifi::local_IP, config::wifi::gateway, config::wifi::subnet);
 }
