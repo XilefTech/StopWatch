@@ -1,34 +1,25 @@
 #include <Arduino.h>
-#include <WiFi.h>
+#include "wifiFunctions.h"
 #include "config.h"
 
+bool buttonPressed = false; // Flag to indicate if the button is pressed
 
-int initWifi();
-
+void IRAM_ATTR onButtonPress() {
+	buttonPressed = true; // Set the flag when the button is pressed
+}
 
 void setup() {
 	initWifi();
+
+	pinMode(config::buttonPin, INPUT_PULLUP); // Set button pin as input with pull-up resistor
+	attachInterrupt(config::buttonPin, onButtonPress, FALLING); // Attach interrupt to button pin
 }
 
 void loop() {
-	while (WiFi.status() == WL_CONNECTED) {
-		delay(1000); // Placeholder for actual work
+	if (buttonPressed) { // Check if the button was pressed
+		buttonPressed = false; // Reset the flag
+
+		// Send a message to the server (replace with your server's IP and port)
+		sendMessage("Button Pressed!"); // Send message to server
 	}
-	WiFi.reconnect(); // Attempt to reconnect if disconnected
-	while (WiFi.status() != WL_CONNECTED) {
-		delay(100); // Wait for reconnection
-	}
-}
-
-
-
-int initWifi() {
-	WiFi.mode(WIFI_STA);
-	WiFi.begin(config::wifi::networkName, config::wifi::password);
-
-	while (WiFi.status() != WL_CONNECTED) {
-		delay(100);
-	}
-
-	WiFi.config(config::wifi::local_IP, config::wifi::gateway, config::wifi::subnet);
 }
