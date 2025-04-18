@@ -1,0 +1,13 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#include <Arduino.h>
+
+struct Config {
+	struct wifi {
+		String networkName = "StopWatchNetwork";
+		String password = "1234"; 
+	};
+}
+
+#endif // CONFIG_H
