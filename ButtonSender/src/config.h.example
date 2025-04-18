@@ -3,7 +3,7 @@
 
 namespace config {
 	namespace wifi {
-		constexpr char networkName[] = "StopWatchNetwork";
+		constexpr char ssid[] = "StopWatchNetwork";
 		constexpr char password[] = "1234";
 
 		IPAddress local_IP(192, 168, 0, 5);
