@@ -6,10 +6,32 @@ namespace config {
 		constexpr char ssid[] = "StopWatchNetwork";
 		constexpr char password[] = "1234";
 
-		IPAddress local_IP(192, 168, 0, 5);
-		IPAddress gateway(192, 168, 0, 1);
-		IPAddress subnet(255, 255, 255, 0);
+		inline IPAddress localIP(192, 168, 0, 5);
+		inline IPAddress gateway(192, 168, 0, 1);
+		inline IPAddress subnet(255, 255, 255, 0);
+
+		inline const char* hostname = "StopWatch-ButtonSender";
 	};
-}
+
+	namespace server {
+		inline IPAddress host(192, 168, 0, 1);
+		constexpr int port = 80; // Port number for the server
+
+		inline const char* endpointAddressStartStop = "http://192.168.0.1/startstop";
+		inline const char* endpointAddressBattery = "http://192.168.0.1/battery";
+	};
+
+	namespace battery {
+		constexpr int pin = 4; // GPIO pin for the battery level (ADC pin)
+		constexpr int transmissionThreshold = 2; // Battery level threshold for sending updates (in %)
+		constexpr float voltageFactor = 1.267; // inverse Factor of the voltage divider applied to the battery voltage
+		
+		// Minimum and maximum voltage for the battery (in mV)
+		constexpr int minVoltage = 3700;
+		constexpr int maxVoltage = 4200;
+	};
+	
+	constexpr int buttonPin = 0; // GPIO pin for the button
+};
 
 #endif // CONFIG_H
