@@ -7,11 +7,11 @@ void reconnect(WiFiEvent_t event, WiFiEventInfo_t info) {
 	}
 }
 
-int initWifi() {
+void initWifi() {
 	WiFi.onEvent(reconnect, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
 
 	WiFi.mode(WIFI_STA);
-	WiFi.config(config::wifi::local_IP, config::wifi::gateway, config::wifi::subnet);
+	WiFi.config(config::wifi::localIP, config::wifi::gateway, config::wifi::subnet);
 	WiFi.setHostname(config::wifi::hostname);
 
 	WiFi.begin(config::wifi::ssid, config::wifi::password);
@@ -21,12 +21,37 @@ int initWifi() {
 	}
 }
 
-void sendMessage(const char* message) {
+void sendPress() {
 	WiFiClient client;
 	if (client.connect(config::server::host, config::server::port)) {
-		client.println(message); // Send message to server
+		httpPostRequest(client, config::server::endpointAddressStartStop, "pressed"); // Send message to server
 		client.stop(); // Close the connection
 	} else {
 		Serial.println("Connection failed!"); // Print error message if connection fails
 	}
+}
+
+void sendBatteryUpdate(int batteryLevel) {
+	WiFiClient client;
+	if (client.connect(config::server::host, config::server::port)) {
+		httpPostRequest(client, config::server::endpointAddressBattery, "value=" + String(batteryLevel)); // Send battery status to server
+		client.stop(); // Close the connection
+	} else {
+		Serial.println("Connection failed!"); // Print error message if connection fails
+	}
+}
+
+
+
+int httpPostRequest(WiFiClient& client, const char* serverName, String message) {
+	HTTPClient http;
+	  
+	// Your IP address with path or Domain name with URL path 
+	http.begin(client, serverName);
+
+	http.addHeader("Content-Type", "application/x-www-form-urlencoded"); // Specify content-type header
+
+	int responseCode = http.POST(message); // Send the request with the message
+  
+	return responseCode;
 }
