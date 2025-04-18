@@ -1,12 +1,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <Arduino.h>
-
-struct Config {
-	struct wifi {
-		String networkName = "StopWatchNetwork";
-		String password = "1234"; 
+namespace config {
+	namespace wifi {
+		constexpr char networkName[] = "StopWatchNetwork";
+		constexpr char password[] = "1234"; 
 	};
 }
 
