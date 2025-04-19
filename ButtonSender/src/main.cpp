@@ -12,10 +12,22 @@ void IRAM_ATTR onButtonPress() {
 
 
 void setup() {
+	pinMode(LED_BUILTIN, OUTPUT); // Set the built-in LED pin as output
+	digitalWrite(LED_BUILTIN, HIGH); // Turn on the LED to indicate setup is in progress
+
 	initWifi();
 
 	pinMode(config::buttonPin, INPUT_PULLUP); // Set button pin as input with pull-up resistor
-	attachInterrupt(config::buttonPin, onButtonPress, FALLING); // Attach interrupt to button pin
+	attachInterrupt(config::buttonPin, onButtonPress, RISING); // Attach interrupt to button pin
+
+	// flash the LED to indicate setup is complete
+	for (int i = 0; i < 3; i++) {
+		digitalWrite(LED_BUILTIN, LOW); // Turn off the LED
+		delay(100); // Wait for 100 ms
+		digitalWrite(LED_BUILTIN, HIGH); // Turn on the LED
+		delay(100); // Wait for 100 ms
+	}
+	digitalWrite(LED_BUILTIN, LOW); // Turn off the LED to indicate setup is complete
 }
 
 void loop() {
