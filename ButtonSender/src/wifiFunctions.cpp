@@ -11,7 +11,12 @@ void initWifi() {
 	WiFi.onEvent(reconnect, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
 
 	WiFi.mode(WIFI_STA);
-	WiFi.config(config::wifi::localIP, config::wifi::gateway, config::wifi::subnet);
+	if (config::wifi::useStaticIP) {
+		WiFi.config(config::wifi::localIP, config::wifi::gateway, config::wifi::subnet); // Set static IP address
+	} else {
+		WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE); // Use DHCP
+	}
+	
 	WiFi.setHostname(config::wifi::hostname);
 
 	WiFi.begin(config::wifi::ssid, config::wifi::password);

@@ -4,8 +4,9 @@
 namespace config {
 	namespace wifi {
 		constexpr char ssid[] = "StopWatchNetwork";
-		constexpr char password[] = "1234";
+		constexpr char password[] = "1234"; // please change!
 
+		inline const bool useStaticIP = false; // Set to true for static IP, false for DHCP
 		inline IPAddress localIP(192, 168, 0, 5);
 		inline IPAddress gateway(192, 168, 0, 1);
 		inline IPAddress subnet(255, 255, 255, 0);
@@ -17,12 +18,12 @@ namespace config {
 		inline IPAddress host(192, 168, 0, 1);
 		constexpr int port = 80; // Port number for the server
 
-		inline const char* endpointAddressStartStop = "http://192.168.0.1/startstop";
-		inline const char* endpointAddressBattery = "http://192.168.0.1/battery";
+		inline const char* endpointAddressStartStop = "http://192.168.178.120:8080/startstop";
+		inline const char* endpointAddressBattery = "http://192.168.178.120:8080/battery";
 	};
 
 	namespace battery {
-		constexpr int pin = 4; // GPIO pin for the battery level (ADC pin)
+		constexpr int pin = 35; // GPIO pin for the battery level (ADC pin)
 		constexpr int transmissionThreshold = 2; // Battery level threshold for sending updates (in %)
 		constexpr float voltageFactor = 1.267; // inverse Factor of the voltage divider applied to the battery voltage
 		
@@ -31,7 +32,7 @@ namespace config {
 		constexpr int maxVoltage = 4200;
 	};
 	
-	constexpr int buttonPin = 0; // GPIO pin for the button
+	constexpr int buttonPin = 21; // GPIO pin for the button
 };
 
 #endif // CONFIG_H
