@@ -48,14 +48,11 @@ void Digit::updateDisplay() {
 
 	uint8_t firstSegmentIndex = 0x40;
 	
-	Serial.printf("Digit value: %d\n", currentValue);
 	for (int i = 0; i < 8; i++) {
 		if (digitBits[currentValue] & (firstSegmentIndex >> i)) {
 			drawSegment(i, true); // Draw the segment in white (on)
-			Serial.printf("Segment %d%s", i, " is ON");
 		}
 	}
-	Serial.println();
 };
 
 void Digit::drawSegment(uint8_t segment, bool on) {
