@@ -1,6 +1,5 @@
 #include <digit.h>
 
-
 /*
 We use a 7-segment display with the following pinout:
 	---A---
