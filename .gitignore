@@ -217,3 +217,5 @@ pyrightconfig.json
 
 
 ButtonSender/src/config.h
+DisplayReceiver/.vscode/extensions.json
+StopWatch.code-workspace
