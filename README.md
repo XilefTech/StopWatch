@@ -14,3 +14,8 @@ Will Connect to the wifi AP given in its `config.h` and call `POST` Requests for
 ESP with HUB75-Matrix attached, displaying the current state of the stopwatch. This unit is also responsible for tracking the time.
 
 Bonus feature: Maybe there will be an interface between a laptop and the esp to transmit battery percentages of the `ButtonSender(s)`
+
+
+##### Thanks to
+https://randomnerdtutorials.com/esp32-client-server-wi-fi/
+https://github.com/mrcodetastic/ESP32-HUB75-MatrixPanel-DMA
