@@ -48,6 +48,7 @@ private:
 	uint64_t startTime;
 	uint64_t stopTime;
 	bool running;
+	bool resetted;
 
 	// Digits for displaying the time
 	Digit *minuteDigit;

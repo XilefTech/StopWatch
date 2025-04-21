@@ -10,6 +10,7 @@ Timer::Timer(uint16_t xOffset, uint16_t yOffset, MatrixPanel_I2S_DMA *display) {
 	startTime = 0;
 	stopTime = 0;
 	running = false;
+	resetted = true;
 
 	minuteDigit 	= new Digit(0, 2, xOffset, yOffset, display);
 	tenSecondDigit 	= new Digit(0, 2, xOffset + 16, yOffset, display);
@@ -20,9 +21,13 @@ Timer::Timer(uint16_t xOffset, uint16_t yOffset, MatrixPanel_I2S_DMA *display) {
 }
 
 bool Timer::start() {
+	if (!resetted) {
+		return false;
+	}
 	if (!running) {
 		startTime = millis();
 		running = true;
+		resetted = false;
 		return true;
 	}
 	return false;
@@ -49,6 +54,7 @@ void Timer::reset() {
 	startTime = 0;
 	stopTime = 0;
 	running = false;
+	resetted = true;
 	updateDisplay();
 }
 
