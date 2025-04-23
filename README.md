@@ -8,6 +8,13 @@ One Big red button with a small 1s lipo and an ESP inside, Lipo goes to VIN and 
 
 Will Connect to the wifi AP given in its `config.h` and call `POST` Requests for every button press to the given address with the content '`pressed`'. Also battery updates will be sent as soon as they change.
 
+#### Startup LED Indicator
+Static - Starting, WIFI-Init, Trying to connect to AP
+
+Blinking (slowish, every 0.5ms) - Retrieving host MAC
+
+3 Fast blinks - Startup done
+
 
 ### DisplayReceiver
 
