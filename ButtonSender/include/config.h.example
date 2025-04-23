@@ -1,0 +1,52 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#include <ESPNowHelper.h>
+
+#define useESPNow // comment this line to use HTTP instead of ESP-NOW
+
+namespace config {
+	namespace wifi {
+		constexpr char ssid[] = "StopWatchNetwork";
+		constexpr char password[] = "12345678";
+
+		inline const bool useStaticIP = false; // Set to true for static IP, false for DHCP
+		inline IPAddress localIP(192, 168, 4, 5);
+		inline IPAddress gateway(192, 168, 4, 1);
+		inline IPAddress subnet(255, 255, 255, 0);
+
+		inline const char* hostname = "StopWatch-ButtonSender";
+	};
+
+	namespace server {
+		// --- ESP-NOW settings ---
+		constexpr ESPNOWMessageType messageTypePress = ESPNOWMessageType::START;
+		constexpr ESPNOWMessageType messageTypeRelease = ESPNOWMessageType::NONE;
+
+
+		// --- HTTP server settings ---
+		// please note that http currently is not used, there are helper functions for it, but it has mainly been replaced by ESP-NOW
+
+		inline IPAddress host(192, 168, 4, 1);
+		constexpr int port = 8080; // Port number for the server
+
+		inline const char* endpointAddressPress = "http://192.168.4.1:8080/startstop";
+		inline const char* endpointAddressRelease = "http://192.168.4.1:8080/"; // currently none
+		inline const char* endpointAddressBattery = "http://192.168.4.1:8080/battery";
+		inline const char* endpointHostMacAddress = "http://192.168.4.1:8080/macaddress";
+	};
+
+	namespace battery {
+		constexpr int pin = 35; // GPIO pin for the battery level (ADC pin)
+		constexpr int transmissionThreshold = 2; // Battery level threshold for sending updates (in %)
+		constexpr float voltageFactor = 1.267; // inverse Factor of the voltage divider applied to the battery voltage
+		
+		// Minimum and maximum voltage for the battery (in mV)
+		constexpr int minVoltage = 3700;
+		constexpr int maxVoltage = 4200;
+	};
+	
+	constexpr int buttonPin = 21; // GPIO pin for the button
+};
+
+#endif // CONFIG_H
