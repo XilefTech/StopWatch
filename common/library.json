@@ -1,0 +1,14 @@
+{
+	"name": "StopWatch Shared ESP Code",
+	"version": "0.1.0",
+	"authors": {
+	    "name": "XilefTech",
+	    "maintainer": true
+  	},
+	"license": "EUPL-1.2",
+	"export": {
+    "include": [
+      "src"
+    ]
+  }
+}
