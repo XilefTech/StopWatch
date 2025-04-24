@@ -11,8 +11,10 @@ void ESPNowHelper::addPeerFromMacAddress(const String& macAddress) {
 
 esp_err_t ESPNowHelper::sendMessage(ESPNOWMessageType messageType, uint8_t* data) {
 	if (messageType == ESPNOWMessageType::NONE) {
+		Serial.println("[ESP-NOW-Helper] Empty message, discarding.");
 		return ESP_OK; // Invalid argument if no message type is provided
 	}
+	Serial.println("[ESP-NOW-Helper] Sending message: " + String((uint8_t) messageType));
 
 	// Create the message struct
 	ESPNOWMessage message;
@@ -22,7 +24,13 @@ esp_err_t ESPNowHelper::sendMessage(ESPNOWMessageType messageType, uint8_t* data
 	}
 
 	// Send the message using ESP-NOW
-	return esp_now_send(peerInfo.peer_addr, (uint8_t*) &message, sizeof(message));
+	esp_err_t status = esp_now_send(peerInfo.peer_addr, (uint8_t*) &message, sizeof(message));
+	if (status == ESP_OK) {
+		Serial.println("[ESP-NOW-Helper] Message sent successfully.");
+	} else {
+		Serial.println("[ESP-NOW-Helper] Error sending message: " + String(status));
+	}
+	return status;
 }
 
 // see https://randomnerdtutorials.com/esp-now-esp32-arduino-ide/
@@ -33,6 +41,8 @@ void ESPNowHelper::createPeerInfo(const String& hostMac) {
 		macAddress[i] = hostMac.substring(3 * i, 3 * i + 2).toInt();
 	}
 
+	Serial.printf("[ESP-NOW-Helper] Creating peer info with parsed MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n",
+		macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
 	memcpy(peerInfo.peer_addr, macAddress, 6);
 	peerInfo.channel = 0;
 	peerInfo.encrypt = false;

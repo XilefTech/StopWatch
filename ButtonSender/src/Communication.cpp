@@ -8,6 +8,9 @@ void Communication::reconnect(WiFiEvent_t event, WiFiEventInfo_t info) {
 }
 
 void Communication::initWifi() {
+	Serial.println("Initializing Communication...");
+	Serial.println("Setting up WiFi...");
+
 	hostMac = "";
 	WiFi.onEvent(reconnect, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
 
@@ -17,14 +20,35 @@ void Communication::initWifi() {
 	} else {
 		WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE); // Use DHCP
 	}
-	WiFi.setHostname(config::wifi::hostname);
+	// WiFi.setHostname(config::wifi::hostname);
 
-	WiFi.begin(config::wifi::ssid, config::wifi::password);
+	Serial.print("Connecting....");
+	delay(1000); // Wait for a second before starting the connection
+	// WiFi.begin(config::wifi::ssid, config::wifi::password);
+
+	int startTime = millis(); // Start time for connection attempt
+	while (WiFi.status() != WL_CONNECTED) {
+		// if (WiFi.status() == WL_CONNECT_FAILED) {
+		// 	Serial.print("\nConnection failed! Please check your credentials. Retrying anyways. I got nothing better to do.");
+		// 	Serial.flush(); // Flush the serial buffer
+		// 	delay(200);
+		// 	WiFi.begin(config::wifi::ssid, config::wifi::password);
+		// }
+		Serial.print(".");
+		delay(500);
+		if (millis() - startTime > 5000) { // Timeout after 10 seconds
+			Serial.println("\nConnection timed out! Falling back to hard-coded mac.");
+			hostMac = config::server::fallbackMacAddress; // Use hard-coded MAC address if connection fails
+			break;
+		}
+	}
+	Serial.println("\nConnected to WiFi!");
+	Serial.println("IP Address: " + WiFi.localIP().toString());
+
+	Serial.println("Initializing ESP-NOW...");
 	esp_now_init();
 
-	while (WiFi.status() != WL_CONNECTED) {
-		delay(100);
-	}
+	Serial.println("Retrieving Host MAC-Address...");
 
 	// Retrieve Host MAC-Address, blink meanwhile to indicate status
 	while (hostMac == "") {
@@ -42,6 +66,7 @@ void Communication::initWifi() {
 
 
 void Communication::sendPress() {
+	Serial.println("Sending press message to server...");
 	#ifdef useESPNow
 		espNowHelper.sendMessage(config::server::messageTypePress, nullptr);
 	#else
@@ -50,26 +75,32 @@ void Communication::sendPress() {
 }
 
 void Communication::sendRelease() {
+	Serial.println("Sending release message to server...");
 	#ifdef useESPNow
-		espNowHelper.sendMessage(config::server::messageTypePress, nullptr);
+		espNowHelper.sendMessage(config::server::messageTypeRelease, nullptr);
 	#else
 		doHttpPostRequest(config::server::endpointAddressRelease, "released");
 	#endif
 }
 
 void Communication::sendBatteryUpdate(uint8_t batteryLevel) {
+	Serial.println("Sending battery update to server...");
 	#ifdef useESPNow
-		espNowHelper.sendMessage(config::server::messageTypePress, (uint8_t*) &batteryLevel);
+		espNowHelper.sendMessage(ESPNOWMessageType::BATTERY, (uint8_t*) &batteryLevel);
 	#else
 		doHttpPostRequest(config::server::endpointAddressBattery, "value=" + String(batteryLevel));
 	#endif
 }
 
 String Communication::getHostMacAddress() {
+	Serial.println("Retrieving Host MAC-Address from server...");
+
 	WiFiClient client;
 	if (client.connect(config::server::host, config::server::port)) {
 		String macAddress = httpGetRequest(client, config::server::endpointHostMacAddress);
 		client.stop(); // Close the connection
+
+		Serial.println("Host MAC-Address retrieved: " + macAddress);
 		return macAddress;
 	} else {
 		Serial.println("Connection failed!"); // Print error message if connection fails

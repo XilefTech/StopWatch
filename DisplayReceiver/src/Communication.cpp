@@ -30,18 +30,22 @@ void Communication::setTimer(Timer* timer) {
 };
 
 void Communication::onReceiveCallBack(const uint8_t* macAddress, const uint8_t* data, int length) {
+	Serial.printf("Received data from: %02X:%02X:%02X:%02X:%02X:%02X\n",
+		macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
+
 	ESPNOWMessage message;
 	memcpy(&message, data, sizeof(message)); // Copy the received data into the message struct
+	Serial.printf("Decoded data: Message type: %d, data: %d\n", message.type, message.data);
 	if (message.type == ESPNOWMessageType::NONE) {
 		return;
 	}
 
 	if (message.type == ESPNOWMessageType::START) {
-		timer->start(); // Start the timer
+		timer->start();
 	} else if (message.type == ESPNOWMessageType::STOP) {
-		timer->stop(); // Stop the timer
+		timer->stop();
 	} else if (message.type == ESPNOWMessageType::RESET) {
-		timer->reset(); // Reset the timer
+		timer->reset();
 	} else if (message.type == ESPNOWMessageType::BATTERY) {
 		// TODO
 	}
