@@ -23,6 +23,7 @@ void setup() {
 	timer = new Timer(5, 7, display); // Create a timer object with the display
 
 	communication.setTimer(timer);
+	Serial.println("Startup complete.");
 }
 
 void loop() {
