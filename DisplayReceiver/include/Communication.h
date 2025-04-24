@@ -14,7 +14,7 @@ public:
 	void setTimer(Timer* timer);
 
 private:
-	Webserver webserver;
+	static Webserver webserver;
 	static Timer* timer;
 
 	static void onReceiveCallBack(const uint8_t* macAddress, const uint8_t* data, int length);

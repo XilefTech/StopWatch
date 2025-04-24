@@ -1,8 +1,9 @@
 #include <Communication.h>
 
 Timer* Communication::timer = nullptr;
+Webserver Communication::webserver = Webserver();
 
-Communication::Communication() : webserver() {
+Communication::Communication() {
 	
 };
 
@@ -47,6 +48,12 @@ void Communication::onReceiveCallBack(const uint8_t* macAddress, const uint8_t* 
 	} else if (message.type == ESPNOWMessageType::RESET) {
 		timer->reset();
 	} else if (message.type == ESPNOWMessageType::BATTERY) {
-		// TODO
+		char* macAddressStr = new char[18];
+		sprintf(macAddressStr, "%02X:%02X:%02X:%02X:%02X:%02X",
+			macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
+
+		webserver.batteryManager->setBatteryLevel(macAddressStr, message.data);
+
+		free(macAddressStr);
 	}
 };

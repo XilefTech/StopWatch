@@ -5,6 +5,9 @@
 #include <WiFi.h>
 #include <config.h>
 #include <timer.h>
+#include <esp_wifi.h>
+#include <LittleFS.h>
+#include <BatteryManager.h>
 
 /**
  * @brief Webserver class to handle HTTP requests and responses.
@@ -15,6 +18,7 @@ public:
 	Webserver();
 	void startServer(); // Start the web server
 	inline void setTimer(Timer* timer) { this->timer = timer; };
+	BatteryManager* batteryManager = nullptr;
 private:
 	AsyncWebServer server; // Create a web server on port 80
 	Timer* timer;
