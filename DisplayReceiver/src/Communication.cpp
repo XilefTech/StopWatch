@@ -1,10 +1,10 @@
 #include <Communication.h>
 
 Timer* Communication::timer = nullptr;
-Webserver Communication::webserver = Webserver();
+Webserver* Communication::webserver = nullptr;
 
 Communication::Communication() {
-	
+	webserver = new Webserver(); // Create a new web server instance
 };
 
 void Communication::initialize() {
@@ -14,7 +14,7 @@ void Communication::initialize() {
 	}
 	WiFi.softAP(config::ssid, config::password); // Start the access point
 
-	webserver.startServer();
+	webserver->startServer();
 
 	// Init ESP-NOW
 	if (esp_now_init() != ESP_OK) {
@@ -27,7 +27,7 @@ void Communication::initialize() {
 
 void Communication::setTimer(Timer* timer) {
 	this->timer = timer;
-	webserver.setTimer(timer);
+	webserver->setTimer(timer);
 };
 
 void Communication::onReceiveCallBack(const uint8_t* macAddress, const uint8_t* data, int length) {
@@ -52,8 +52,8 @@ void Communication::onReceiveCallBack(const uint8_t* macAddress, const uint8_t* 
 		sprintf(macAddressStr, "%02X:%02X:%02X:%02X:%02X:%02X",
 			macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
 
-		webserver.batteryManager->setBatteryLevel(macAddressStr, message.data);
+		webserver->batteryManager->setBatteryLevel(String(macAddressStr), message.data);
 
-		free(macAddressStr);
+		delete[] macAddressStr;
 	}
 };
