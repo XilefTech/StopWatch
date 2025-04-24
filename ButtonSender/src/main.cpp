@@ -2,27 +2,12 @@
 #include "battery.h"
 #include <Ascii-print.h>
 
-bool buttonPressed = false;
-bool buttonReleased = false;
+#include <Bounce2.h>
+
+Bounce2::Button button = Bounce2::Button();
+
 int previouslySentBatteryLevel = 999;
 
-
-uint64_t lastPressTime = 0;
-
-void IRAM_ATTR onButtonChange() {
-	bool buttonState = digitalRead(config::buttonPin);
-
-	if (millis() - lastPressTime < 100) { // Debounce time of 50ms
-		return;
-	}
-
-	if (buttonState) {
-		buttonReleased = true;
-	} else {
-		buttonPressed = true;
-	}
-	lastPressTime = millis(); // Update the last press time
-}
 
 String hostMac = "";
 Communication comms;
@@ -39,8 +24,9 @@ void setup() {
 
 	comms.initWifi();
 
-	pinMode(config::buttonPin, INPUT_PULLUP);
-	attachInterrupt(config::buttonPin, onButtonChange, CHANGE);
+	button.attach(config::buttonPin, INPUT_PULLUP);
+	button.interval(config::debounceTime);
+	button.setPressedState(HIGH);
 
 	// flash the LED to indicate setup is complete
 	for (int i = 0; i < 3; i++) {
@@ -54,19 +40,12 @@ void setup() {
 }
 
 void loop() {
-	if (buttonPressed) {
+	button.update();
+
+	if (button.pressed()) {
 		comms.sendPress();
-
-		if (!buttonReleased) { // we do not want to wait now if we want to send smth else that is time-critical
-			delay(100); // Delay to avoid multiple presses being registered
-		}
-		buttonPressed = false;
-	}
-
-	if (buttonReleased) { 
+	} else if (button.released()) {
 		comms.sendRelease();
-		delay(200); // Delay to avoid multiple presses being registered
-		buttonReleased = false; 
 	}
 
 	// check battery level, only send updates if the battery level has changed significantly to save battery life
