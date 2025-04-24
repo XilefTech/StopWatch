@@ -35,10 +35,14 @@ esp_err_t ESPNowHelper::sendMessage(ESPNOWMessageType messageType, uint8_t* data
 
 // see https://randomnerdtutorials.com/esp-now-esp32-arduino-ide/
 void ESPNowHelper::createPeerInfo(const String& hostMac) {
+	Serial.println("[ESP-NOW-Helper] Creating peer info from MAC address: " + hostMac);
+
 	uint8_t macAddress[6];
 	for (int i = 0; i < 6; i++) {
 		// mac address is xx:xx:xx:xx:xx, we want to avoid all colons, so we go in steps of 3 characters
-		macAddress[i] = hostMac.substring(3 * i, 3 * i + 2).toInt();
+		String substring = hostMac.substring(3 * i, 3 * i + 2);
+		macAddress[i] = strtol(substring.c_str(), nullptr, 16);
+		Serial.printf("[ESP-NOW-Helper] Parsed byte %d: '%s' into '%02X'\n", i, substring, macAddress[i]);
 	}
 
 	Serial.printf("[ESP-NOW-Helper] Creating peer info with parsed MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n",
