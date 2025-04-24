@@ -1,6 +1,7 @@
 #include <display.h>
 #include <timer.h>
 #include <Communication.h>
+#include <Ascii-print.h>
 
 Timer* timer = nullptr;
 
@@ -9,6 +10,9 @@ Communication communication;
 
 void setup() {
 	Serial.begin(115200);
+	Serial.println("Welcome to \n");
+	Serial.println(ascii_print::stopWatch);
+	Serial.println("DisplayReceiver - ESP32\n");
 	Serial.println("Starting up...");
 
 	communication.initialize();
